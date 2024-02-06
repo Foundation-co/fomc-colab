@@ -24,6 +24,29 @@ fomc_sent_untagged <- readxl::read_xlsx(
   col_types = c("numeric", "date", "text", "text", "text", "text")
 )
 
+fomc_sent_untagged2 <- 
+  readxl::read_xlsx(
+    "data-raw/df2_cleaned.xlsx",
+    sheet = 1,
+    col_types = c("text", "text")
+  ) |>
+  mutate(
+    date = date |> as.Date(format = "%m/%d/%Y")
+  )
+
+# append sentences from updated data to untagged sentences
+fomc_sent_untagged <- 
+  fomc_sent_untagged |> 
+  bind_rows(
+    fomc_sent_untagged2 |>
+      mutate(
+        id = seq(
+          from = max(fomc_sent_untagged$id) + 1,
+          to = max(fomc_sent_untagged$id) + n()
+        )
+      )
+  )
+
 # verify that I only need untagged data to continue
 if (sum(fomc_sent_tag$id %in% fomc_sent_untagged$id) != nrow(fomc_sent_tag)) {
   stop("There are sentences in `fomc_sent_tag` not in `fomc_sent_untagged`")
