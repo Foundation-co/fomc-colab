@@ -1,6 +1,8 @@
 ### This script creates a chain of topic models of FOMC minutes ----
 # for the FOMC data received from Wonseong Kim and Jan Spoerer
 
+set.seed(8675309)
+
 # load libraries
 library(tidyverse)
 library(Matrix)
